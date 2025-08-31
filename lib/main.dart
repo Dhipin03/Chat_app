@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_chatapp/authgate_screen/authgate.dart';
+import 'package:test_chatapp/chatdetail_screen/bloc/chatdetail_screen_bloc.dart';
 // ignore: unused_import
 import 'package:test_chatapp/chatdetail_screen/chatdetail_screen.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_bloc.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => SignupScreenBloc()),
         BlocProvider(create: (context) => LoginScreenBloc()),
         BlocProvider(create: (context) => ContactdetailScreenBloc()),
+        BlocProvider(create: (context) => ChatdetailScreenBloc()),
       ],
       child: MaterialApp(home: Authgate()),
     );

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_chatapp/chatdetail_screen/chatdetail_screen.dart';
@@ -5,8 +6,19 @@ import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_bloc
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_event.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_state.dart';
 
-class ContactdetailScreen extends StatelessWidget {
+class ContactdetailScreen extends StatefulWidget {
   const ContactdetailScreen({super.key});
+
+  @override
+  State<ContactdetailScreen> createState() => _ContactdetailScreenState();
+}
+
+class _ContactdetailScreenState extends State<ContactdetailScreen> {
+  @override
+  void initState() {
+    context.read<ContactdetailScreenBloc>().add(UserDetailsEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +46,7 @@ class ContactdetailScreen extends StatelessWidget {
                       title: Text('Settings'),
                     ),
                   ),
+                  Text(FirebaseAuth.instance.currentUser!.email!),
                   Spacer(),
                   InkWell(
                     onTap: () {
@@ -50,52 +63,86 @@ class ContactdetailScreen extends StatelessWidget {
               ),
             ),
           ),
-
           appBar: AppBar(backgroundColor: Colors.green),
-          body: InkWell(
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChatdetailScreen(),
-                ),
-              );
-            },
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    spacing: 30,
+          body:
+              state is GetuserDetail
+                  ? StreamBuilder<List<Map<String, dynamic>>>(
+                    stream: state.user,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
 
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundImage: NetworkImage(
-                          'https://images.pexels.com/photos/30327991/pexels-photo-30327991/free-photo-of-historic-fort-in-okzitanien-france.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-                        ),
-                      ),
-                      Expanded(child: Text('Contact1')),
-                      CircleAvatar(
-                        backgroundColor: Colors.black,
-                        child: Text(
-                          '1',
-                          style: TextStyle(color: Colors.lightGreen),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
-              itemCount: 100,
-            ),
-          ),
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No users found'));
+                      }
+
+                      final users = snapshot.data!;
+
+                      return ListView.separated(
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => ChatdetailScreen(
+                                        email: users[index]['email'],
+                                        uid: users[index]['uid'],
+                                      ),
+                                ),
+                              );
+                            },
+                            child:
+                                users[index]['uid'] !=
+                                        FirebaseAuth.instance.currentUser!.uid
+                                    ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 10,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              users[index]['email'] ??
+                                                  'No email',
+                                            ),
+                                          ),
+                                          SizedBox(width: 30),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.black,
+                                            child: Text(
+                                              '1',
+                                              style: TextStyle(
+                                                color: Colors.lightGreen,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                    : SizedBox.shrink(),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return users[index]['uid'] !=
+                                  FirebaseAuth.instance.currentUser!.uid
+                              ? const Divider()
+                              : SizedBox.shrink();
+                        },
+                        itemCount:
+                            users
+                                .length, // Use actual length instead of hardcoded 100
+                      );
+                    },
+                  )
+                  : SizedBox(),
         );
       },
     );

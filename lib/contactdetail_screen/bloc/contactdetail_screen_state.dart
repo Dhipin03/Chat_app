@@ -8,3 +8,10 @@ class ContactdetailScreenState extends Equatable {
 }
 
 final class ContactdetailScreenInitial extends ContactdetailScreenState {}
+
+final class LogoutError extends ContactdetailScreenState {}
+
+final class GetuserDetail extends ContactdetailScreenState {
+  var user;
+  GetuserDetail({required this.user});
+}

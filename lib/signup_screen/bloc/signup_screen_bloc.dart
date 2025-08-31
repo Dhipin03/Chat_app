@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,6 +26,10 @@ class SignupScreenBloc extends Bloc<SignupScreenEvent, SignupScreenState> {
             email: event.useremail,
             password: event.userpassword,
           );
+      FirebaseFirestore.instance
+          .collection('Userdetails')
+          .doc(credential.user!.uid)
+          .set({'uid': credential.user!.uid, 'email': event.useremail});
       emit(SignupScreenSucees(userdetail: credential.user));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

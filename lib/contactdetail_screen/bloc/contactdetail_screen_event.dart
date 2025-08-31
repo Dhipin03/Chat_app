@@ -6,4 +6,9 @@ class ContactdetailScreenEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
-class UserLogoutEvent extends ContactdetailScreenEvent{}
+
+class UserLogoutEvent extends ContactdetailScreenEvent {}
+
+class UserLogoutErrorEvent extends ContactdetailScreenEvent {}
+
+class UserDetailsEvent extends ContactdetailScreenEvent {}
