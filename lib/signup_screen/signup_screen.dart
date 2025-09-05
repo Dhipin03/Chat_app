@@ -35,13 +35,21 @@ class _SignupScreenState extends State<SignupScreen> {
       builder: (context, state) {
         return Scaffold(
           body: Container(
-            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            color: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(
+                    'SignUp',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 40),
                   const SizedBox(height: 10), // Add spacing between elements
                   TextFormField(
                     validator: (String? value) {
@@ -60,12 +68,18 @@ class _SignupScreenState extends State<SignupScreen> {
                     keyboardType:
                         TextInputType.emailAddress, // Changed to emailAddress
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
                       hintText: "Email",
-                      enabledBorder: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 10), // Add spacing between fields
+                  const SizedBox(height: 30), // Add spacing between fields
                   TextFormField(
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
@@ -81,12 +95,18 @@ class _SignupScreenState extends State<SignupScreen> {
                     keyboardType:
                         TextInputType.text, // Changed from number to text
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
                       hintText: "Password",
-                      enabledBorder: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 10), // Add spacing between fields
+                  const SizedBox(height: 30), // Add spacing between fields
                   TextFormField(
                     controller: confirmpasscontroller,
                     validator: (String? value) {
@@ -105,26 +125,23 @@ class _SignupScreenState extends State<SignupScreen> {
                     keyboardType:
                         TextInputType.text, // Changed from number to text
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
                       hintText: "Confirm Password",
-                      enabledBorder: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-
-                  //login if user already registered
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
-                    },
-                    child: Text('Login'),
-                  ),
+                  const SizedBox(height: 30),
 
                   // Add spacing before button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -149,7 +166,41 @@ class _SignupScreenState extends State<SignupScreen> {
                             ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                            : const Text('Signup'),
+                            : const Text(
+                              'Signup',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
+                  ),
+                  SizedBox(height: 30),
+                  InkWell(
+                    onTap:
+                        () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        ),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Already have an account? ',
+                            style: TextStyle(color: Colors.black, fontSize: 15),
+                          ),
+                          TextSpan(
+                            text: 'Sign in',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

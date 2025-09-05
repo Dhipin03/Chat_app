@@ -17,3 +17,11 @@ class ChatdetailgetmsgEvent extends ChatdetailScreenEvent {
   var rid;
   ChatdetailgetmsgEvent({required this.rid});
 }
+
+class DeletemsgEvent extends ChatdetailScreenEvent {
+  String rid;
+  String msgid;
+  DeletemsgEvent({required this.rid, required this.msgid});
+  @override
+  List<Object> get props => [rid, msgid];
+}

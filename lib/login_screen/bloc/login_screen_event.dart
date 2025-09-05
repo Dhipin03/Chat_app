@@ -12,3 +12,10 @@ class UserloginEvent extends LoginScreenEvent {
   String userpass;
   UserloginEvent({required this.useremail, required this.userpass});
 }
+
+class ObscureTextEvent extends LoginScreenEvent {
+  bool hide;
+  ObscureTextEvent({required this.hide});
+  @override
+  List<Object> get props => [hide];
+}

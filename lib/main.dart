@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ContactdetailScreenBloc()),
         BlocProvider(create: (context) => ChatdetailScreenBloc()),
       ],
-      child: MaterialApp(home: Authgate()),
+      child: MaterialApp(themeMode: ThemeMode.system, home: Authgate()),
     );
   }
 }

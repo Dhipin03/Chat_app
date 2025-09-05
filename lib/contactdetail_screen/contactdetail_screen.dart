@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_chatapp/chatdetail_screen/bloc/chatdetail_screen_bloc.dart';
 import 'package:test_chatapp/chatdetail_screen/chatdetail_screen.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_bloc.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_event.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_state.dart';
+import 'package:test_chatapp/model/usermsg_model.dart';
 
 class ContactdetailScreen extends StatefulWidget {
   const ContactdetailScreen({super.key});
@@ -33,20 +35,15 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                 children: [
                   Icon(Icons.message, color: Colors.green, size: 34),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: ListTile(
                       leading: Icon(Icons.home),
                       title: Text('Home'),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {},
-                    child: ListTile(
-                      leading: Icon(Icons.settings),
-                      title: Text('Settings'),
-                    ),
-                  ),
-                  Text(FirebaseAuth.instance.currentUser!.email!),
+
                   Spacer(),
                   InkWell(
                     onTap: () {
@@ -63,7 +60,19 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
               ),
             ),
           ),
-          appBar: AppBar(backgroundColor: Colors.green),
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              FirebaseAuth.instance.currentUser!.email!,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            backgroundColor: Colors.black,
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
           body:
               state is GetuserDetail
                   ? StreamBuilder<List<Map<String, dynamic>>>(
@@ -91,9 +100,13 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder:
-                                      (context) => ChatdetailScreen(
-                                        email: users[index]['email'],
-                                        uid: users[index]['uid'],
+                                      (context) => BlocProvider(
+                                        create:
+                                            (context) => ChatdetailScreenBloc(),
+                                        child: ChatdetailScreen(
+                                          email: users[index]['email'],
+                                          uid: users[index]['uid'],
+                                        ),
                                       ),
                                 ),
                               );
@@ -112,15 +125,21 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                                             child: Text(
                                               users[index]['email'] ??
                                                   'No email',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                           SizedBox(width: 30),
                                           CircleAvatar(
-                                            backgroundColor: Colors.black,
+                                            radius: 12,
+                                            backgroundColor:
+                                                Colors.grey.shade600,
                                             child: Text(
-                                              '1',
+                                              '0',
                                               style: TextStyle(
-                                                color: Colors.lightGreen,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
@@ -133,7 +152,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                         separatorBuilder: (context, index) {
                           return users[index]['uid'] !=
                                   FirebaseAuth.instance.currentUser!.uid
-                              ? const Divider()
+                              ? const SizedBox(height: 20)
                               : SizedBox.shrink();
                         },
                         itemCount:
