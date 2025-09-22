@@ -7,6 +7,7 @@ import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_bloc
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_event.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_state.dart';
 import 'package:test_chatapp/model/usermsg_model.dart';
+import 'package:test_chatapp/signup_screen/signup_screen.dart';
 
 class ContactdetailScreen extends StatefulWidget {
   const ContactdetailScreen({super.key});
@@ -24,7 +25,27 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ContactdetailScreenBloc, ContactdetailScreenState>(
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SignupScreen()),
+        );
+      });
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return BlocConsumer<ContactdetailScreenBloc, ContactdetailScreenState>(
+      listener: (context, state) {
+        if (state is UserlogoutSuccess) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SignupScreen()),
+          );
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           drawer: Drawer(
@@ -43,7 +64,6 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                       title: Text('Home'),
                     ),
                   ),
-
                   Spacer(),
                   InkWell(
                     onTap: () {
@@ -63,7 +83,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: Text(
-              FirebaseAuth.instance.currentUser!.email!,
+              currentUser.email ?? 'Unknown User', // Safe null handling
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -94,6 +114,9 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
 
                       return ListView.separated(
                         itemBuilder: (context, index) {
+                          final user = users[index];
+                          final isCurrentUser = user['uid'] == currentUser.uid;
+
                           return InkWell(
                             onTap: () {
                               Navigator.pushReplacement(
@@ -104,16 +127,15 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                                         create:
                                             (context) => ChatdetailScreenBloc(),
                                         child: ChatdetailScreen(
-                                          email: users[index]['email'],
-                                          uid: users[index]['uid'],
+                                          email: user['email'] ?? '',
+                                          uid: user['uid'] ?? '',
                                         ),
                                       ),
                                 ),
                               );
                             },
                             child:
-                                users[index]['uid'] !=
-                                        FirebaseAuth.instance.currentUser!.uid
+                                !isCurrentUser
                                     ? Padding(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
@@ -123,8 +145,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              users[index]['email'] ??
-                                                  'No email',
+                                              user['email'] ?? 'No email',
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600,
@@ -150,14 +171,13 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                           );
                         },
                         separatorBuilder: (context, index) {
-                          return users[index]['uid'] !=
-                                  FirebaseAuth.instance.currentUser!.uid
+                          final isCurrentUser =
+                              users[index]['uid'] == currentUser.uid;
+                          return !isCurrentUser
                               ? const SizedBox(height: 20)
                               : SizedBox.shrink();
                         },
-                        itemCount:
-                            users
-                                .length, // Use actual length instead of hardcoded 100
+                        itemCount: users.length,
                       );
                     },
                   )

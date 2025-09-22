@@ -21,6 +21,7 @@ class ContactdetailScreenBloc
   ) async {
     try {
       await FirebaseAuth.instance.signOut();
+      emit(UserlogoutSuccess());
     } catch (e) {
       log(e.toString());
       emit(LogoutError());
@@ -48,5 +49,4 @@ class ContactdetailScreenBloc
       },
     );
   }
-  
 }

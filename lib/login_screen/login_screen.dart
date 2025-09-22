@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_chatapp/chatdetail_screen/chatdetail_screen.dart';
 import 'package:test_chatapp/contactdetail_screen/contactdetail_screen.dart';
+import 'package:test_chatapp/forgotPassword_screen/forgotPassword_screen.dart';
 import 'package:test_chatapp/login_screen/bloc/login_screen_bloc.dart';
 import 'package:test_chatapp/signup_screen/signup_screen.dart';
 
@@ -87,11 +88,20 @@ class LoginScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            decoration: TextDecoration.underline,
+                        InkWell(
+                          onTap:
+                              () => Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotpasswordScreen(),
+                                ),
+                              ),
+                          child: Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ],

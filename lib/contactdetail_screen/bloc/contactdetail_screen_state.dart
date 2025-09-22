@@ -15,3 +15,5 @@ final class GetuserDetail extends ContactdetailScreenState {
   var user;
   GetuserDetail({required this.user});
 }
+
+class UserlogoutSuccess extends ContactdetailScreenState {}

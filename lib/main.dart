@@ -8,6 +8,7 @@ import 'package:test_chatapp/chatdetail_screen/chatdetail_screen.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_bloc.dart';
 import 'package:test_chatapp/contactdetail_screen/contactdetail_screen.dart';
 import 'package:test_chatapp/firebase_options.dart';
+import 'package:test_chatapp/forgotPassword_screen/cubit/forgotpassword_screen_cubit.dart';
 import 'package:test_chatapp/login_screen/bloc/login_screen_bloc.dart';
 import 'package:test_chatapp/signup_screen/bloc/signup_screen_bloc.dart';
 import 'package:test_chatapp/signup_screen/signup_screen.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => LoginScreenBloc()),
         BlocProvider(create: (context) => ContactdetailScreenBloc()),
         BlocProvider(create: (context) => ChatdetailScreenBloc()),
+        BlocProvider(create: (context) => ForgotpasswordScreenCubit()),
       ],
       child: MaterialApp(themeMode: ThemeMode.system, home: Authgate()),
     );
