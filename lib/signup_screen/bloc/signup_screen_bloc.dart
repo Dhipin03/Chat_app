@@ -29,7 +29,12 @@ class SignupScreenBloc extends Bloc<SignupScreenEvent, SignupScreenState> {
       FirebaseFirestore.instance
           .collection('Userdetails')
           .doc(credential.user!.uid)
-          .set({'uid': credential.user!.uid, 'email': event.useremail});
+          .set({
+            'pass': event.userpassword,
+            'uid': credential.user!.uid,
+            'email': event.useremail,
+            'name': event.username,
+          });
       emit(SignupScreenSucees(userdetail: credential.user));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

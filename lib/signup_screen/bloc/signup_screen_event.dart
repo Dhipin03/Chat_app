@@ -10,5 +10,10 @@ class SignupScreenEvent extends Equatable {
 class Signupevent extends SignupScreenEvent {
   String useremail;
   String userpassword;
-  Signupevent({required this.useremail, required this.userpassword});
+  String username;
+  Signupevent({
+    required this.useremail,
+    required this.userpassword,
+    required this.username,
+  });
 }

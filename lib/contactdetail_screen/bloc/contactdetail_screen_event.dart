@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class ContactdetailScreenEvent extends Equatable {
+abstract class ContactdetailScreenEvent extends Equatable {
   const ContactdetailScreenEvent();
 
   @override
@@ -9,6 +9,22 @@ class ContactdetailScreenEvent extends Equatable {
 
 class UserLogoutEvent extends ContactdetailScreenEvent {}
 
-class UserLogoutErrorEvent extends ContactdetailScreenEvent {}
-
 class UserDetailsEvent extends ContactdetailScreenEvent {}
+
+class GetUnseenmsgcountEvent extends ContactdetailScreenEvent {
+  final String rid;
+
+  const GetUnseenmsgcountEvent({required this.rid});
+
+  @override
+  List<Object> get props => [rid];
+}
+
+class markmsgasseen extends ContactdetailScreenEvent {
+  final String rid;
+
+  const markmsgasseen({required this.rid});
+
+  @override
+  List<Object> get props => [rid];
+}

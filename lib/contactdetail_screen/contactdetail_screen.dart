@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_chatapp/account_screen/account_screen.dart';
 import 'package:test_chatapp/chatdetail_screen/bloc/chatdetail_screen_bloc.dart';
 import 'package:test_chatapp/chatdetail_screen/chatdetail_screen.dart';
 import 'package:test_chatapp/contactdetail_screen/bloc/contactdetail_screen_bloc.dart';
@@ -64,6 +65,20 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                       title: Text('Home'),
                     ),
                   ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AccountScreen(),
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.key),
+                      title: Text('Account'),
+                    ),
+                  ),
                   Spacer(),
                   InkWell(
                     onTap: () {
@@ -83,11 +98,11 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: Text(
-              currentUser.email ?? 'Unknown User', // Safe null handling
+              'Link Up',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
               ),
             ),
             backgroundColor: Colors.black,
@@ -117,8 +132,18 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                           final user = users[index];
                           final isCurrentUser = user['uid'] == currentUser.uid;
 
+                          // Skip current user
+                          if (isCurrentUser) {
+                            return SizedBox.shrink();
+                          }
+
                           return InkWell(
                             onTap: () {
+                              // Mark messages as seen when opening chat
+                              context.read<ContactdetailScreenBloc>().add(
+                                markmsgasseen(rid: user['uid'] ?? ''),
+                              );
+
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -127,47 +152,89 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                                         create:
                                             (context) => ChatdetailScreenBloc(),
                                         child: ChatdetailScreen(
-                                          email: user['email'] ?? '',
+                                          email: user['name'] ?? '',
                                           uid: user['uid'] ?? '',
                                         ),
                                       ),
                                 ),
                               );
                             },
-                            child:
-                                !isCurrentUser
-                                    ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 10,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      user['name'] ?? '',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              user['email'] ?? 'No email',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 30),
+                                  // StreamBuilder to show unseen message count for this specific contact
+                                  StreamBuilder<int>(
+                                    stream: context
+                                        .read<ContactdetailScreenBloc>()
+                                        .getUnseenMessageCount(
+                                          user['uid'] ?? '',
+                                        ),
+                                    builder: (context, countSnapshot) {
+                                      // Show loading state
+                                      if (countSnapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        );
+                                      }
+
+                                      // Get the unseen count
+                                      final unseenCount =
+                                          countSnapshot.data ?? 0;
+
+                                      // Show badge if there are unseen messages
+                                      if (unseenCount > 0) {
+                                        return Container(
+                                          padding: EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius: BorderRadius.circular(
+                                              30,
                                             ),
                                           ),
-                                          SizedBox(width: 30),
-                                          CircleAvatar(
-                                            radius: 12,
-                                            backgroundColor:
-                                                Colors.grey.shade600,
-                                            child: Text(
-                                              '0',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
+                                          constraints: BoxConstraints(
+                                            minWidth: 24,
+                                            minHeight: 24,
                                           ),
-                                        ],
-                                      ),
-                                    )
-                                    : SizedBox.shrink(),
+                                          child: Text(
+                                            unseenCount > 99
+                                                ? '99+'
+                                                : unseenCount.toString(),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
+                                      }
+
+                                      // Show nothing if no unseen messages
+                                      return SizedBox.shrink();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
                         },
                         separatorBuilder: (context, index) {
@@ -181,7 +248,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
                       );
                     },
                   )
-                  : SizedBox(),
+                  : Center(child: CircularProgressIndicator()),
         );
       },
     );

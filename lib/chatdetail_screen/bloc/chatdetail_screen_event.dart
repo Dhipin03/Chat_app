@@ -25,3 +25,10 @@ class DeletemsgEvent extends ChatdetailScreenEvent {
   @override
   List<Object> get props => [rid, msgid];
 }
+
+class MarkMsgSeenEvent extends ChatdetailScreenEvent {
+  String rid;
+  MarkMsgSeenEvent({required this.rid});
+  @override
+  List<Object> get props => [rid];
+}

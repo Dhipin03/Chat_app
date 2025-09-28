@@ -17,6 +17,7 @@ class ChatdetailScreenBloc
     on<ChatdetailsndmsgEvent>(sendusermsg);
     on<ChatdetailgetmsgEvent>(getusermsg);
     on<DeletemsgEvent>(deleteusermsg);
+    on<MarkMsgSeenEvent>(markmsgseen);
   }
   @override
   Future<void> close() {
@@ -110,5 +111,30 @@ class ChatdetailScreenBloc
     List chatroomlist = [sid, rid];
     chatroomlist.sort();
     return chatroomlist.join('_');
+  }
+
+  FutureOr<void> markmsgseen(
+    MarkMsgSeenEvent event,
+    Emitter<ChatdetailScreenState> emit,
+  ) {
+    var cuserid = FirebaseAuth.instance.currentUser!.uid;
+    var chatroomid = createchatroomid(sid: cuserid, rid: event.rid);
+
+    try {
+      FirebaseFirestore.instance
+          .collection('Chatroom')
+          .doc(chatroomid)
+          .collection('msg')
+          .where('sid', isEqualTo: event.rid) // Messages from the other user
+          .where('isSeen', isEqualTo: false) // Only unseen messages
+          .get()
+          .then((querySnapshot) {
+            for (var doc in querySnapshot.docs) {
+              doc.reference.update({'isSeen': true});
+            }
+          });
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

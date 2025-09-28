@@ -7,6 +7,7 @@ class Usermsg {
   String msg;
   String email;
   final bool? isDeleted;
+  bool? isSeen;
 
   Timestamp timestamp;
   Usermsg({
@@ -17,6 +18,7 @@ class Usermsg {
     required this.sid,
     required this.timestamp,
     this.isDeleted = false,
+    this.isSeen = false,
   });
 
   Map<String, dynamic> tomap() {
@@ -27,6 +29,7 @@ class Usermsg {
       'timestamp': timestamp,
       'email': email,
       'isDeleted': isDeleted ?? false,
+      'isSeen': isSeen ?? false,
     };
   }
 }

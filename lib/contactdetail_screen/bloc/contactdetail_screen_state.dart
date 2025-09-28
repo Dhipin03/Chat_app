@@ -17,3 +17,8 @@ final class GetuserDetail extends ContactdetailScreenState {
 }
 
 class UserlogoutSuccess extends ContactdetailScreenState {}
+
+class GetUnseenMsgCountState extends ContactdetailScreenState {
+  var count;
+  GetUnseenMsgCountState({required this.count});
+}

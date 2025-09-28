@@ -19,6 +19,7 @@ class _SignupScreenState extends State<SignupScreen> {
     TextEditingController emailcontroller = TextEditingController();
     TextEditingController passcontroller = TextEditingController();
     TextEditingController confirmpasscontroller = TextEditingController();
+    TextEditingController namecontroller = TextEditingController();
     return BlocConsumer<SignupScreenBloc, SignupScreenState>(
       listener: (context, state) {
         if (state is SignupScreenSucees) {
@@ -50,7 +51,30 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   SizedBox(height: 40),
-                  const SizedBox(height: 10), // Add spacing between elements
+                  TextFormField(
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter name';
+                      }
+
+                      return null;
+                    },
+                    controller: namecontroller,
+                    keyboardType:
+                        TextInputType.emailAddress, // Changed to emailAddress
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      hintText: "Name",
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30), // Add spacing between elements
                   TextFormField(
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
@@ -155,6 +179,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         // Process data.
                         context.read<SignupScreenBloc>().add(
                           Signupevent(
+                            username: namecontroller.text,
                             useremail: emailcontroller.text,
                             userpassword: passcontroller.text,
                           ),
